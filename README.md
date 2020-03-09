@@ -1,0 +1,1 @@
+In this project we’re going to build a simple web browser using WebKit. The whole thing takes only about 60 lines of code once you remove comments and empty lines, which shows you just how easy to use WebKit is.
