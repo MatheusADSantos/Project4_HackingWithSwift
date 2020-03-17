@@ -12,7 +12,8 @@ import WebKit
 class ViewController: UIViewController, WKNavigationDelegate {
     var webview : WKWebView!
     var progressView: UIProgressView!
-    var websites = ["hackingwithswift.com","apple.com"]
+    var websites = [String]()
+    var indexWebsite = Int()
     
     override func loadView() {
         webview = WKWebView()
@@ -25,19 +26,21 @@ class ViewController: UIViewController, WKNavigationDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(openTapped))
         
-        let url = URL(string: "https://www." + websites[0])!
+        let url = URL(string: "https://www." + websites[indexWebsite])!
         webview.load(URLRequest(url: url))
         webview.allowsBackForwardNavigationGestures = true
         
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let refresh = UIBarButtonItem(barButtonSystemItem: .refresh, target: webview, action: #selector(webview.reload))
+        let left = UIBarButtonItem(title: "<=", style: .done, target: webview, action: #selector(webview.goBack))
+        let right = UIBarButtonItem(title: "=>", style: .plain, target: webview, action: #selector(webview.goForward))
         progressView = UIProgressView(progressViewStyle: .default)
         progressView.sizeToFit()
         let progressButton = UIBarButtonItem(customView: progressView)
         
         webview.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         
-        toolbarItems = [progressButton, spacer, refresh]
+        toolbarItems = [progressButton, spacer, left, right, refresh]
         navigationController?.isToolbarHidden = false
     }
 
@@ -81,10 +84,27 @@ class ViewController: UIViewController, WKNavigationDelegate {
                 }
             }
         }
+        
         decisionHandler(.cancel)
+        print("NAOOOOOOO")
+        showAlert(title: url!)
+        
+    }
+    
+    func showAlert(title: URL) {
+        if !title.absoluteString.contains("about") {
+            let ac = UIAlertController(title: "Attention!", message: "You can't go to website: \(title)", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+            present(ac, animated: true)
+        } else {
+            print("OKK")
+        }
     }
     
 }
+
+//https://www.hackingwithswift.com/articles/112/the-ultimate-guide-to-wkwebview
+
 /*There are some easy bits, but they are outweighed by the hard bits so let's go through every line in detail to make sure:
 
 First, we set the constant url to be equal to the URL of the navigation. This is just to make the code clearer.
